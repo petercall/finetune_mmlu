@@ -1,0 +1,89 @@
+# Fine-tuning Experiment Configuration
+# See plans/specification.md for full documentation
+
+# Model Configuration
+model:
+  name: "allenai/OLMo-1B-hf"
+  torch_dtype: "bfloat16"  # Use bf16 for training, falls back to fp16 if unavailable
+
+# Dataset Configuration
+dataset:
+  name: "HuggingFaceTB/finemath-4plus"
+  target_size_gb: 10.0  # Stream approximately 10GB from dataset
+  validation_split: 0.1  # 10% held out for validation
+  text_column: "text"  # Column name containing text data
+  streaming: true  # Use streaming mode to avoid loading full dataset
+
+# Tokenization Configuration
+tokenization:
+  max_length: 2048  # Maximum sequence length
+  padding: "longest"  # Pad to longest sequence in batch (not max_length)
+  truncation: true  # Truncate sequences longer than max_length
+
+# Training Configuration
+training:
+  # Batch sizes
+  effective_batch_size: 64  # Total effective batch size across all GPUs
+  per_gpu_batch_size: 8  # Batch size per GPU (gradient_accumulation computed automatically)
+  
+  # Learning rate
+  learning_rate: 2.0e-5  # Peak learning rate
+  weight_decay: 0.01  # AdamW weight decay
+  
+  # Learning rate schedule
+  lr_scheduler:
+    warmup_ratio: 0.05  # Linear warmup over 5% of total steps
+    type: "linear"  # Linear decay after warmup
+  
+  # Training duration
+  max_epochs: 5  # Maximum number of epochs
+  
+  # Precision
+  mixed_precision: "bf16"  # bf16 preferred, falls back to fp16 if needed
+  
+  # Reproducibility
+  seed: 42
+
+# Checkpointing Configuration
+checkpointing:
+  output_dir: "outputs/checkpoints"
+  validation_frequency: 0.25  # Validate every quarter epoch
+  checkpoint_frequency: 0.5  # Save checkpoint every half epoch
+  save_optimizer_state: false  # Don't save optimizer (not resuming training)
+
+# Early Stopping Configuration
+early_stopping:
+  patience: 2  # Stop after 2 consecutive validation checks without improvement
+  min_delta: 0.0  # Minimum improvement to count as progress
+  continue_after_trigger: 0.5  # Continue for one more half epoch after triggering
+
+# Logging Configuration
+logging:
+  # Weights & Biases
+  wandb:
+    project: "finetune-olmo"
+    entity: null  # Use default entity (your username)
+    log_interval: 10  # Log every N steps
+  
+  # Local logging
+  local:
+    log_dir: "outputs/logs"
+    save_json: true  # Save metrics as JSON
+  
+  # Console output
+  console:
+    progress_bar: true
+    print_every: 100  # Print summary every N steps
+
+# Visualization Configuration (saved after training)
+visualization:
+  plots_dir: "outputs/plots"
+  loss_curves: true  # Plot train/val loss curves
+  lr_schedule: true  # Plot learning rate schedule
+
+# MMLU Evaluation Configuration (used by evaluate_mmlu.py)
+mmlu_eval:
+  batch_size: 8
+  num_fewshot: 2  # Number of few-shot examples
+  seed: 42  # Seed for selecting few-shot examples
+  output_dir: "outputs/mmlu_results"
