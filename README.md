@@ -16,10 +16,6 @@ See [`plans/specification.md`](plans/specification.md) for full experiment docum
 ### Installation
 
 ```bash
-# Clone the repository
-git clone https://github.com/username/finetune-olmo.git
-cd finetune-olmo
-
 # Create virtual environment
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
@@ -38,10 +34,7 @@ wandb login
 python src/train.py
 
 # Multi-GPU (e.g., 4 GPUs)
-accelerate launch --num_processes=4 src/train.py
-
-# Multi-GPU (e.g., 64 GPUs)
-accelerate launch --num_processes=64 src/train.py
+accelerate launch --num_processes=8 src/train.py
 
 # With custom config
 python src/train.py --config configs/config.yaml
@@ -161,7 +154,7 @@ If you use this code in your research, please cite:
 ```bibtex
 @software{finetune_olmo,
   title = {Fine-tuning Experiment: BOS Token Generations as Training Data Proxies},
-  year = {2024},
-  url = {https://github.com/username/finetune-olmo}
+  year = {2026},
+  url = {https://github.com/petercall/finetune_mmlu}
 }
 ```
