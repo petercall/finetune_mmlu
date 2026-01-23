@@ -12,7 +12,7 @@ dataset:
   target_size_gb: 10.0  # Stream approximately 10GB from dataset
   validation_split: 0.1  # 10% held out for validation
   text_column: "text"  # Column name containing text data
-  streaming: true  # Use streaming mode to avoid loading full dataset
+  streaming: false  # Use streaming mode to avoid loading full dataset
 
 # Tokenization Configuration
 tokenization:

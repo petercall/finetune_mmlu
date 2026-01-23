@@ -46,7 +46,7 @@ def load_finemath_dataset(
     target_size_gb: float = 10.0,
     validation_split: float = 0.1,
     seed: int = 42,
-    streaming: bool = True,
+    streaming: bool = False,
 ) -> Tuple[Dataset, Dataset]:
     """
     Load the finemath-4plus dataset, streaming approximately the target size.
@@ -65,9 +65,10 @@ def load_finemath_dataset(
     if streaming:
         # Load dataset in streaming mode
         dataset = load_dataset(
-            "HuggingFaceTB/finemath-4plus",
+            "HuggingFaceTB/finemath",
+            "finemath-4plus",
             split="train",
-            streaming=True,
+            streaming=True
         )
         
         # Estimate samples needed for target size
@@ -94,18 +95,11 @@ def load_finemath_dataset(
     else:
         # Load full dataset (may be slow/memory-intensive)
         full_dataset = load_dataset(
-            "HuggingFaceTB/finemath-4plus",
+            "HuggingFaceTB/finemath",
+            "finemath-4plus",
             split="train",
+            streaming=False
         )
-        
-        # Estimate size and subsample if needed
-        estimated_size = estimate_dataset_size_gb(full_dataset)
-        print(f"Full dataset size: ~{estimated_size:.1f}GB")
-        
-        if estimated_size > target_size_gb:
-            target_samples = int(len(full_dataset) * (target_size_gb / estimated_size))
-            full_dataset = full_dataset.shuffle(seed=seed).select(range(target_samples))
-            print(f"Subsampled to {len(full_dataset):,} samples (~{target_size_gb}GB)")
     
     # Split into train and validation
     split_dataset = full_dataset.train_test_split(
@@ -306,7 +300,7 @@ if __name__ == "__main__":
     # Load a small subset for testing
     train_data, val_data = load_finemath_dataset(
         target_size_gb=0.01,  # Just 10MB for testing
-        streaming=True,
+        streaming=True
     )
     
     print(f"\nTrain sample: {train_data[0]}")

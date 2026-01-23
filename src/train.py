@@ -293,7 +293,7 @@ def train(config: Dict):
         target_size_gb=config["dataset"]["target_size_gb"],
         validation_split=config["dataset"]["validation_split"],
         seed=config["training"]["seed"],
-        streaming=config["dataset"]["streaming"],
+        streaming=config["dataset"]["streaming"]
     )
     
     if accelerator.is_main_process:
